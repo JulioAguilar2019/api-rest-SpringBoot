@@ -16,20 +16,22 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    @PostMapping
-    public ResponseEntity<PostDTO> savePost(@RequestBody PostDTO postDTO){
-        return new ResponseEntity<>(postService.createPost(postDTO), HttpStatus.CREATED);
-    }
-
     @GetMapping
-    public List<PostDTO> getAllPosts(){
-        return postService.getAllPosts();
+    public List<PostDTO> getAllPosts(@RequestParam(value = "page", defaultValue = "0", required = false) int page,
+                                     @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+        return postService.getAllPosts(page, size);
     }
 
     @GetMapping("/{idPost}")
     public ResponseEntity<PostDTO> getPostById(@PathVariable("idPost") Long idPost){
         return new ResponseEntity<>(postService.getPostById(idPost), HttpStatus.OK);
     }
+
+    @PostMapping
+    public ResponseEntity<PostDTO> savePost(@RequestBody PostDTO postDTO){
+        return new ResponseEntity<>(postService.createPost(postDTO), HttpStatus.CREATED);
+    }
+
     @PutMapping("/{idPost}")
     public ResponseEntity<PostDTO> updatePost(@RequestBody PostDTO postDTO, @PathVariable("idPost") Long idPost){
         return new ResponseEntity<>(postService.updatePost(postDTO, idPost), HttpStatus.OK);

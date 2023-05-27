@@ -5,6 +5,9 @@ import com.app.apispringboot.entities.PostEntity;
 import com.app.apispringboot.exceptions.ResourceNotFoundException;
 import com.app.apispringboot.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,15 +24,17 @@ public class PostServiceImp implements PostService{
 
         PostEntity newPost = postRepository.save(post);
 
-        PostDTO postResponse = convertEntityToDTO(newPost);
-
-        return postResponse;
+        return convertEntityToDTO(newPost);
     }
 
     @Override
-    public List<PostDTO> getAllPosts() {
-        List<PostEntity> posts = postRepository.findAll();
-        return posts.stream().map(post -> convertEntityToDTO(post)).collect(Collectors.toList());
+    public List<PostDTO> getAllPosts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<PostEntity> posts = postRepository.findAll(pageable);
+
+        List<PostEntity> listPosts = posts.getContent();
+        return listPosts.stream().map(post -> convertEntityToDTO(post)).collect(Collectors.toList());
     }
 
     @Override
