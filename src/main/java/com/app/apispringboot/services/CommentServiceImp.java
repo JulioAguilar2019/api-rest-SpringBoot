@@ -39,6 +39,11 @@ public class CommentServiceImp implements CommentService{
         return comments.stream().map(comment ->ConvertEntityToDTO(comment)).collect(Collectors.toList());
     }
 
+    @Override
+    public CommentDTO getCommentById(Long idPost, Long idComment) {
+        return null;
+    }
+
     private CommentDTO ConvertEntityToDTO(CommentEntity comment) {
         CommentDTO commentDTO = new CommentDTO();
 
