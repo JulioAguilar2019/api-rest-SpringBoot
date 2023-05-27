@@ -1,19 +1,20 @@
 package com.app.apispringboot.services;
 
 import com.app.apispringboot.DTO.PostDTO;
-
-import java.util.List;
+import com.app.apispringboot.DTO.PostResponse;
 
 public interface PostService {
 
      PostDTO createPost(PostDTO postDTO);
 
-     List<PostDTO> getAllPosts(int page, int size);
+     PostResponse getAllPosts(int page, int size, String sortBy, String sortDir);
 
-     PostDTO getPostById(Long idPost);
+     PostDTO getPostById(Long id);
 
-     PostDTO updatePost(PostDTO postDTO, Long idPost);
+     PostDTO updatePost(PostDTO postDTO, Long id);
 
-     void deletePost(Long idPost);
+     void deletePost(Long id);
+
+
 
 }

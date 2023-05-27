@@ -1,13 +1,13 @@
 package com.app.apispringboot.controllers;
 
 import com.app.apispringboot.DTO.PostDTO;
+import com.app.apispringboot.DTO.PostResponse;
 import com.app.apispringboot.services.PostService;
+import com.app.apispringboot.utilities.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -17,14 +17,16 @@ public class PostController {
     private PostService postService;
 
     @GetMapping
-    public List<PostDTO> getAllPosts(@RequestParam(value = "page", defaultValue = "0", required = false) int page,
-                                     @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
-        return postService.getAllPosts(page, size);
+    public PostResponse getAllPosts(@RequestParam(value = "page", defaultValue = AppConstants.NUMBER_OF_PAGE_DEFAULT, required = false) int page,
+                                    @RequestParam(value = "size", defaultValue = AppConstants.SIZE_OF_PAGE_DEFAULT, required = false) int size,
+                                    @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY_DEFAULT, required = false) String sortBy,
+                                    @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR_DEFAULT, required = false) String sortDir) {
+        return postService.getAllPosts(page, size, sortBy, sortDir);
     }
 
-    @GetMapping("/{idPost}")
-    public ResponseEntity<PostDTO> getPostById(@PathVariable("idPost") Long idPost){
-        return new ResponseEntity<>(postService.getPostById(idPost), HttpStatus.OK);
+    @GetMapping("/{id}")
+    public ResponseEntity<PostDTO> getPostById(@PathVariable("id") Long id){
+        return new ResponseEntity<>(postService.getPostById(id), HttpStatus.OK);
     }
 
     @PostMapping
@@ -32,14 +34,14 @@ public class PostController {
         return new ResponseEntity<>(postService.createPost(postDTO), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{idPost}")
-    public ResponseEntity<PostDTO> updatePost(@RequestBody PostDTO postDTO, @PathVariable("idPost") Long idPost){
-        return new ResponseEntity<>(postService.updatePost(postDTO, idPost), HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<PostDTO> updatePost(@RequestBody PostDTO postDTO, @PathVariable("id") Long id){
+        return new ResponseEntity<>(postService.updatePost(postDTO, id), HttpStatus.OK);
     }
 
-//    @DeleteMapping("/{idPost}")
-//    public ResponseEntity<Map<String, String>> deletePost(@PathVariable("idPost") Long idPost){
-//        postService.deletePost(idPost);
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Map<String, String>> deletePost(@PathVariable("id") Long id){
+//        postService.deletePost(id);
 //
 //        Map<String, String> response = new HashMap<>();
 //        response.put("message", "Post deleted successfully");
@@ -47,9 +49,9 @@ public class PostController {
 //        return new ResponseEntity<>(response,HttpStatus.OK);
 //    }
 
-    @DeleteMapping("/{idPost}")
-    public ResponseEntity<String> deletePost(@PathVariable("idPost") Long idPost){
-        postService.deletePost(idPost);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletePost(@PathVariable("id") Long id){
+        postService.deletePost(id);
         return new ResponseEntity<>("Post deleted successfully", HttpStatus.OK);
     }
 

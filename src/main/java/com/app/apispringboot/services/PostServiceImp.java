@@ -1,6 +1,7 @@
 package com.app.apispringboot.services;
 
 import com.app.apispringboot.DTO.PostDTO;
+import com.app.apispringboot.DTO.PostResponse;
 import com.app.apispringboot.entities.PostEntity;
 import com.app.apispringboot.exceptions.ResourceNotFoundException;
 import com.app.apispringboot.repository.PostRepository;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,24 +30,38 @@ public class PostServiceImp implements PostService{
     }
 
     @Override
-    public List<PostDTO> getAllPosts(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public PostResponse getAllPosts(int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ?
+                Sort.by(sortBy).ascending()
+                :
+                Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<PostEntity> posts = postRepository.findAll(pageable);
 
         List<PostEntity> listPosts = posts.getContent();
-        return listPosts.stream().map(post -> convertEntityToDTO(post)).collect(Collectors.toList());
+        List<PostDTO> content =  listPosts.stream().map(post -> convertEntityToDTO(post)).collect(Collectors.toList());
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(content);
+        postResponse.setPage(posts.getNumber());
+        postResponse.setSize(posts.getSize());
+        postResponse.setTotalElements(posts.getTotalElements());
+        postResponse.setTotalPages(posts.getTotalPages());
+        postResponse.setLastPage(posts.isLast());
+
+        return postResponse;
     }
 
     @Override
-    public PostDTO getPostById(Long idPost) {
-        PostEntity post = postRepository.findById(idPost).orElseThrow(( ) -> new ResourceNotFoundException("Post", "idPost", idPost));
+    public PostDTO getPostById(Long id) {
+        PostEntity post = postRepository.findById(id).orElseThrow(( ) -> new ResourceNotFoundException("Post", "id", id));
         return convertEntityToDTO(post);
     }
 
     @Override
-    public PostDTO updatePost(PostDTO postDTO, Long idPost) {
-        PostEntity post = postRepository.findById(idPost).orElseThrow(( ) -> new ResourceNotFoundException("Post", "idPost", idPost));
+    public PostDTO updatePost(PostDTO postDTO, Long id) {
+        PostEntity post = postRepository.findById(id).orElseThrow(( ) -> new ResourceNotFoundException("Post", "id", id));
         post.setTitle(postDTO.getTitle());
         post.setDescription(postDTO.getDescription());
         post.setContent(postDTO.getContent());
@@ -55,15 +71,15 @@ public class PostServiceImp implements PostService{
     }
 
     @Override
-    public void deletePost(Long idPost) {
-        PostEntity post = postRepository.findById(idPost).orElseThrow(( ) -> new ResourceNotFoundException("Post", "idPost", idPost));
+    public void deletePost(Long id) {
+        PostEntity post = postRepository.findById(id).orElseThrow(( ) -> new ResourceNotFoundException("Post", "id", id));
         postRepository.delete(post);
     }
 
     private PostDTO convertEntityToDTO(PostEntity postEntity) {
         PostDTO postDTO = new PostDTO();
 
-        postDTO.setIdPost(postEntity.getIdPost());
+        postDTO.setId(postEntity.getId());
         postDTO.setTitle(postEntity.getTitle());
         postDTO.setDescription(postEntity.getDescription());
         postDTO.setContent(postEntity.getContent());
@@ -74,7 +90,7 @@ public class PostServiceImp implements PostService{
     private PostEntity convertDTOToEntity(PostDTO postDTO) {
         PostEntity postEntity = new PostEntity();
 
-        postEntity.setIdPost(postDTO.getIdPost());
+        postEntity.setId(postDTO.getId());
         postEntity.setTitle(postDTO.getTitle());
         postEntity.setDescription(postDTO.getDescription());
         postEntity.setContent(postDTO.getContent());
