@@ -17,13 +17,31 @@ public class CommentController {
     private CommentService commentService;
 
 
-    @GetMapping("/posts/{postId}/comments")
-    public List<CommentDTO> findCommentsByPostId(@PathVariable(value = "postId") Long postId) {
-        return commentService.getCommentsByPostId(postId);
+    @GetMapping("/posts/{idPost}/comments")
+    public List<CommentDTO> findCommentsByidPost(@PathVariable(value = "idPost") Long idPost) {
+        return commentService.getCommentsByPostId(idPost);
     }
 
-    @PostMapping("/posts/{postId}/comments")
-    public ResponseEntity<CommentDTO> createComment(@PathVariable(value = "postId") long postId, @RequestBody CommentDTO commentDTO) {
-        return new ResponseEntity<>(commentService.createComment(postId, commentDTO), HttpStatus.CREATED);
+    @GetMapping("/posts/{idPost}/comments/{idComment}")
+    public ResponseEntity<CommentDTO> findCommentById(@PathVariable(value = "idPost") long idPost, @PathVariable(value = "idComment") Long idComment) {
+        return new ResponseEntity<>(commentService.getCommentById(idPost, idComment), HttpStatus.OK);
     }
+
+    @PostMapping("/posts/{idPost}/comments")
+    public ResponseEntity<CommentDTO> createComment(@PathVariable(value = "idPost") long idPost, @RequestBody CommentDTO commentDTO) {
+        return new ResponseEntity<>(commentService.createComment(idPost, commentDTO), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/posts/{idPost}/comments/{idComment}")
+    public ResponseEntity<CommentDTO> updateComment(@PathVariable(value = "idPost") long idPost, @PathVariable(value = "idComment") Long idComment, @RequestBody CommentDTO commentDTO) {
+        return new ResponseEntity<>(commentService.updateComment(idPost, idComment, commentDTO), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/posts/{idPost}/comments/{idComment}")
+    public ResponseEntity<String> deleteComment(@PathVariable(value = "idPost") long idPost, @PathVariable(value = "idComment") Long idComment){
+        commentService.deleteComment(idPost,idComment);
+        return new ResponseEntity<>("Comment deleted successfully", HttpStatus.OK);
+    }
+
+
 }

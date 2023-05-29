@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 
 public class BlogAppException extends RuntimeException {
     private static final Long serialVersionUID = 1L;
-
     private HttpStatus status;
     private String message;
 
@@ -20,5 +19,20 @@ public class BlogAppException extends RuntimeException {
         this.message = message1;
     }
 
+    public HttpStatus getStatus() {
+        return status;
+    }
 
+    public void setStatus(HttpStatus status) {
+        this.status = status;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }
