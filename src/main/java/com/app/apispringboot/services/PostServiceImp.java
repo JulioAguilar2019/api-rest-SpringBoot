@@ -5,6 +5,7 @@ import com.app.apispringboot.DTO.PostResponse;
 import com.app.apispringboot.entities.PostEntity;
 import com.app.apispringboot.exceptions.ResourceNotFoundException;
 import com.app.apispringboot.repository.PostRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,10 @@ public class PostServiceImp implements PostService{
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
     public PostDTO createPost(PostDTO postDTO) {
         PostEntity post = convertDTOToEntity(postDTO);
@@ -76,26 +81,40 @@ public class PostServiceImp implements PostService{
         postRepository.delete(post);
     }
 
-    private PostDTO convertEntityToDTO(PostEntity postEntity) {
-        PostDTO postDTO = new PostDTO();
+//Convert with ModelMapper
 
-        postDTO.setId(postEntity.getId());
-        postDTO.setTitle(postEntity.getTitle());
-        postDTO.setDescription(postEntity.getDescription());
-        postDTO.setContent(postEntity.getContent());
-
+private PostDTO convertEntityToDTO(PostEntity postEntity){
+        PostDTO postDTO = modelMapper.map(postEntity, PostDTO.class);
         return postDTO;
-    }
+}
 
-    private PostEntity convertDTOToEntity(PostDTO postDTO) {
-        PostEntity postEntity = new PostEntity();
-
-        postEntity.setId(postDTO.getId());
-        postEntity.setTitle(postDTO.getTitle());
-        postEntity.setDescription(postDTO.getDescription());
-        postEntity.setContent(postDTO.getContent());
-
+private PostEntity convertDTOToEntity(PostDTO postDTO) {
+        PostEntity postEntity = modelMapper.map(postDTO, PostEntity.class);
         return postEntity;
-    }
+}
+
+//Convert manually
+
+//    private PostDTO convertEntityToDTO(PostEntity postEntity) {
+//        PostDTO postDTO = new PostDTO();
+//
+//        postDTO.setId(postEntity.getId());
+//        postDTO.setTitle(postEntity.getTitle());
+//        postDTO.setDescription(postEntity.getDescription());
+//        postDTO.setContent(postEntity.getContent());
+//
+//        return postDTO;
+//    }
+//
+//    private PostEntity convertDTOToEntity(PostDTO postDTO) {
+//        PostEntity postEntity = new PostEntity();
+//
+//        postEntity.setId(postDTO.getId());
+//        postEntity.setTitle(postDTO.getTitle());
+//        postEntity.setDescription(postDTO.getDescription());
+//        postEntity.setContent(postDTO.getContent());
+//
+//        return postEntity;
+//    }
 
 }
