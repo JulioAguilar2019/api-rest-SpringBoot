@@ -1,9 +1,11 @@
 package com.app.apispringboot.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -21,7 +23,10 @@ public class PostEntity {
     private String description;
     @Column(name ="content", nullable = false)
     private String content;
+
+    @JsonManagedReference
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<CommentEntity> comments = new HashSet<>();
+    private List<CommentEntity> comments;
+
 
 }

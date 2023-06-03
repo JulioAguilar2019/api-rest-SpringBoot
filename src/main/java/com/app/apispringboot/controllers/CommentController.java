@@ -2,6 +2,7 @@ package com.app.apispringboot.controllers;
 
 import com.app.apispringboot.DTO.CommentDTO;
 import com.app.apispringboot.services.CommentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,18 +29,18 @@ public class CommentController {
     }
 
     @PostMapping("/posts/{idPost}/comments")
-    public ResponseEntity<CommentDTO> createComment(@PathVariable(value = "idPost") long idPost, @RequestBody CommentDTO commentDTO) {
+    public ResponseEntity<CommentDTO> createComment(@PathVariable(value = "idPost") long idPost, @Valid @RequestBody CommentDTO commentDTO) {
         return new ResponseEntity<>(commentService.createComment(idPost, commentDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/posts/{idPost}/comments/{idComment}")
-    public ResponseEntity<CommentDTO> updateComment(@PathVariable(value = "idPost") long idPost, @PathVariable(value = "idComment") Long idComment, @RequestBody CommentDTO commentDTO) {
+    public ResponseEntity<CommentDTO> updateComment(@PathVariable(value = "idPost") long idPost, @PathVariable(value = "idComment") Long idComment, @Valid @RequestBody CommentDTO commentDTO) {
         return new ResponseEntity<>(commentService.updateComment(idPost, idComment, commentDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("/posts/{idPost}/comments/{idComment}")
-    public ResponseEntity<String> deleteComment(@PathVariable(value = "idPost") long idPost, @PathVariable(value = "idComment") Long idComment){
-        commentService.deleteComment(idPost,idComment);
+    public ResponseEntity<String> deleteComment(@PathVariable(value = "idPost") long idPost, @PathVariable(value = "idComment") Long idComment) {
+        commentService.deleteComment(idPost, idComment);
         return new ResponseEntity<>("Comment deleted successfully", HttpStatus.OK);
     }
 
